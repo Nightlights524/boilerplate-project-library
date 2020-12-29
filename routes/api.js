@@ -74,8 +74,8 @@ module.exports = function (app) {
   app.route('/api/books/:id')
     .get(async function (req, res){
       try {
-        const foundBook = await Book.find({_id: req.params.id}).orFail().exec();
-        res.json(foundBook);
+        const foundBook = await Book.findById(req.params.id).orFail().exec();
+        return res.json(foundBook);
       }
       catch (error) {
         console.error(error.message);
@@ -95,16 +95,14 @@ module.exports = function (app) {
     })
     
     .delete(async function(req, res){
-      //if successful response will be 'delete successful'
       try {
         const bookid = req.params.id;
-        console.log(bookid);
-        await Book.deleteOne({_id: bookid}).orFail().exec();
-        res.send('delete successful');
+        await Book.findByIdAndDelete({bookid}).orFail().exec();
+        return res.send('delete successful');
       }
       catch (error) {
         console.error(error.message);
-        res.send('no book exists');
+        return res.send('no book exists');
       }
     });
   
