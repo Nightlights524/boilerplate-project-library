@@ -70,7 +70,6 @@ module.exports = function (app) {
     });
 
 
-
   app.route('/api/books/:id')
     .get(async function (req, res){
       try {
@@ -83,21 +82,31 @@ module.exports = function (app) {
       }
     })
     
-    .post(function(req, res){
-      //json res format same as .get
+    .post(async function(req, res){
       try {
         const bookid = req.params.id;
         const comment = req.body.comment;
+        if (!Object.prototype.hasOwnProperty.call(req.body, 'comment') ||
+            comment === '') {
+          return res.send('missing required field comment');
+        }
+        const updatedBook = await Book.findByIdAndUpdate(
+          bookid,
+          {$push: {comments: comment}},
+          {new: true}
+        ).orFail().exec();
+
+        res.json(updatedBook);
       }
       catch (error) {
         console.error(error.message);
+        res.send('no book exists');
       }
     })
     
     .delete(async function(req, res){
       try {
-        const bookid = req.params.id;
-        await Book.findByIdAndDelete(bookid).orFail().exec();
+        await Book.findByIdAndDelete(req.params.id).orFail().exec();
         return res.send('delete successful');
       }
       catch (error) {
@@ -105,5 +114,4 @@ module.exports = function (app) {
         return res.send('no book exists');
       }
     });
-  
 };
