@@ -50,12 +50,7 @@ module.exports = function (app) {
           comments: []
         });
 
-        res.json({
-          _id: newBook._id,
-          title: newBook.title,
-          commentcount: newBook.commentcount,
-          comments: newBook.comments
-        })
+        res.json({newBook});
       }
       catch (error) {
         console.error(error);
