@@ -59,8 +59,9 @@ module.exports = function (app) {
     })
     
     .delete(async function(req, res){
-      //if successful response will be 'complete delete successful'
       try {
+        await Book.deleteMany().exec();
+        res.send('complete delete successful');
       }
       catch (error) {
         console.error(error);
@@ -91,13 +92,16 @@ module.exports = function (app) {
       }
     })
     
-    .delete(function(req, res){
+    .delete(async function(req, res){
       //if successful response will be 'delete successful'
       try {
         const bookid = req.params.id;
+        await Book.deleteOne({_id: bookid}).orFail().exec();
+        res.send('delete successful');
       }
       catch (error) {
         console.error(error);
+        res.send('no book exists');
       }
     });
   
