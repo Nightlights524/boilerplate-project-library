@@ -71,22 +71,54 @@ suite('Functional Tests', function() {
 
     suite('GET /api/books => array of books', function(){
       
-      // test('Test GET /api/books',  function(done){
-      //   //done();
-      // });      
+      test('Test GET /api/books',  function(done){
+        chai.request(server)
+          .get('/api/books')
+          .end(function(err, res){
+            assert.equal(res.status, 200);
+            assert.isArray(res.body, 'response should be an array');
+            if (res.body.length > 0) {
+              assert.property(res.body[0], 'commentcount', 'Books in array should contain commentcount');
+              assert.property(res.body[0], 'title', 'Books in array should contain title');
+              assert.property(res.body[0], '_id', 'Books in array should contain _id');
+              assert.property(res.body[0], 'comments', 'Books in array should contain a comment array');
+            }
+            done();
+          });
+      });      
       
     });
 
 
     suite('GET /api/books/[id] => book object with [id]', function(){
       
-      // test('Test GET /api/books/[id] with id not in db',  function(done){
-      //   //done();
-      // });
+      test('Test GET /api/books/[id] with id not in db',  function(done){
+        chai.request(server)
+          .get('/api/books/invalidID')
+          .end(function(err, res){
+            assert.equal(res.status, 200);
+            assert.equal(res.text, 'no book exists');
+            done();
+          });
+      });
       
-      // test('Test GET /api/books/[id] with valid id in db',  function(done){
-      //   //done();
-      // });
+      test('Test GET /api/books/[id] with valid id in db',  function(done){
+        chai.request(server)
+          .post('/api/books')
+          .send({title: 'New Book'})
+          .end(function(err, res){
+            chai.request(server)
+              .get(`/api/books/${res.body._id}`)
+              .end(function(err, res){
+                assert.equal(res.status, 200);
+                assert.property(res.body, 'commentcount', 'Books should contain commentcount');
+                assert.property(res.body, 'title', 'Books should contain title');
+                assert.property(res.body, '_id', 'Books should contain _id');
+                assert.property(res.body, 'comments', 'Books should contain a comment array');
+                done();
+              });
+          });
+      });
       
     });
 
