@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+
 mongoose.connect(process.env.DB, {
   useNewUrlParser: true, 
   useUnifiedTopology: true,
@@ -25,9 +26,10 @@ module.exports = function (app) {
 
   app.route('/api/books')
     .get(async function (req, res){
-      //response will be array of book objects
-      //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
       try {
+        const allBooks = await Book.find().exec();
+
+        res.json(allBooks);
       }
       catch (error) {
         console.error(error);
@@ -35,12 +37,28 @@ module.exports = function (app) {
     })
     
     .post(async function (req, res){
-      //response will contain new book object including atleast _id and title
       try {
+        if (!Object.prototype.hasOwnProperty.call(req.body, 'title')) {
+          res.send('missing required field title');
+        }
+
         const title = req.body.title;
+        const newBook = await Book.create({
+          title,
+          commentcount: 0,
+          comments: []
+        });
+
+        res.json({
+          _id: newBook._id,
+          title: newBook.title,
+          commentcount: newBook.commentcount,
+          comments: newBook.comments
+        })
       }
       catch (error) {
         console.error(error);
+        res.send(error.message);
       }
     })
     
