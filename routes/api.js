@@ -97,7 +97,7 @@ module.exports = function (app) {
     .delete(async function(req, res){
       try {
         const bookid = req.params.id;
-        await Book.findByIdAndDelete({bookid}).orFail().exec();
+        await Book.findByIdAndDelete(bookid).orFail().exec();
         return res.send('delete successful');
       }
       catch (error) {
