@@ -18,6 +18,10 @@
 		"mocha": "^3.2.0",
 		"dotenv": "^8.2.0"
 	},
+    "devDependencies": {
+        "eslint": "^7.16.0",
+        "nodemon": "^2.0.6"
+    },
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/freeCodeCamp/boilerplate-project-library"
@@ -27,8 +31,5 @@
 		"hyperdev",
 		"express"
 	],
-	"license": "MIT",
-	"devDependencies": {
-		"nodemon": "^2.0.6"
-	}
+	"license": "MIT"
 }
