@@ -73,11 +73,8 @@ module.exports = function (app) {
 
   app.route('/api/books/:id')
     .get(async function (req, res){
-      //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
       try {
-        const bookid = req.params.id;
-        const foundBook = await Book.find({_id: bookid}).exec();
-
+        const foundBook = await Book.find({_id: req.params.id}).orFail().exec();
         res.json(foundBook);
       }
       catch (error) {
