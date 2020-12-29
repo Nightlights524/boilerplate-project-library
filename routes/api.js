@@ -38,11 +38,12 @@ module.exports = function (app) {
     
     .post(async function (req, res){
       try {
-        if (!Object.prototype.hasOwnProperty.call(req.body, 'title')) {
-          res.send('missing required field title');
+        if (!Object.prototype.hasOwnProperty.call(req.body, 'title') ||
+            req.body.title === '') {
+          return res.send('missing required field title');
         }
-
         const title = req.body.title;
+
         const newBook = await Book.create({
           title,
           commentcount: 0,
