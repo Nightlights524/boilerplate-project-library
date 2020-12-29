@@ -50,8 +50,7 @@ module.exports = function (app) {
           comments: []
         });
         
-        console.log(newBook);
-        res.json({newBook});
+        res.json(newBook);
       }
       catch (error) {
         console.error(error.message);
