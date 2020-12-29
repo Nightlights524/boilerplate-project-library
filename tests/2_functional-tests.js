@@ -10,6 +10,7 @@ const chaiHttp = require('chai-http');
 const chai = require('chai');
 const assert = chai.assert;
 const server = require('../server');
+const { MongoNetworkError } = require('mongodb');
 
 chai.use(chaiHttp);
 
@@ -125,17 +126,54 @@ suite('Functional Tests', function() {
 
     suite('POST /api/books/[id] => add comment/expect book object with id', function(){
       
-      // test('Test POST /api/books/[id] with comment', function(done){
-      //   //done();
-      // });
+      test('Test POST /api/books/[id] with comment', function(done){
+        chai.request(server)
+          .post('/api/books')
+          .send({title: 'New Book'})
+          .end(function(err, res){
+            const newComment = 'New Comment';
+            chai.request(server)
+              .post(`/api/books/${res.body._id}`)
+              .send({comment: newComment})
+              .end(function(err, res){
+                assert.equal(res.status, 200);
+                assert.property(res.body, 'commentcount', 'Books should contain commentcount');
+                assert.property(res.body, 'title', 'Books should contain title');
+                assert.property(res.body, '_id', 'Books should contain _id');
+                assert.property(res.body, 'comments', 'Books should contain a comment array');
+                assert.equal(res.body.comments[res.body.comments.length - 1], newComment);
+                done();
+              });
+          });
+      });
 
-      // test('Test POST /api/books/[id] without comment field', function(done){
-      //   //done();
-      // });
+      test('Test POST /api/books/[id] without comment field', function(done){
+        chai.request(server)
+          .post('/api/books')
+          .send({title: 'New Book'})
+          .end(function(err, res){
+            const newComment = 'New Comment';
+            chai.request(server)
+              .post(`/api/books/${res.body._id}`)
+              .end(function(err, res){
+                assert.equal(res.status, 200);
+                assert.equal(res.text, 'missing required field comment', 'missing required field comment');
+                done();
+              });
+          });
+      });
 
-      // test('Test POST /api/books/[id] with comment, id not in db', function(done){
-      //   //done();
-      // });
+      test('Test POST /api/books/[id] with comment, id not in db', function(done){
+        chai.request(server)
+          .post('/api/books/invalidID')
+          .send({comment: 'dummyComment'})
+          .end(function(err, res){
+            assert.equal(res.status, 200);
+            assert.isString(res.text, 'response should be a string');
+            assert.equal(res.text, 'no book exists', 'no book exists');
+            done();
+          });
+      });
       
     });
 
