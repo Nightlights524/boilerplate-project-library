@@ -32,7 +32,7 @@ module.exports = function (app) {
         res.json(allBooks);
       }
       catch (error) {
-        console.error(error);
+        console.error(error.message);
       }
     })
     
@@ -49,11 +49,12 @@ module.exports = function (app) {
           commentcount: 0,
           comments: []
         });
-
+        
+        console.log(newBook);
         res.json({newBook});
       }
       catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.send(error.message);
       }
     })
@@ -64,7 +65,7 @@ module.exports = function (app) {
         res.send('complete delete successful');
       }
       catch (error) {
-        console.error(error);
+        console.error(error.message);
       }
     });
 
@@ -77,7 +78,7 @@ module.exports = function (app) {
         const bookid = req.params.id;
       }
       catch (error) {
-        console.error(error);
+        console.error(error.message);
       }
     })
     
@@ -88,7 +89,7 @@ module.exports = function (app) {
         const comment = req.body.comment;
       }
       catch (error) {
-        console.error(error);
+        console.error(error.message);
       }
     })
     
@@ -96,11 +97,12 @@ module.exports = function (app) {
       //if successful response will be 'delete successful'
       try {
         const bookid = req.params.id;
+        console.log(bookid);
         await Book.deleteOne({_id: bookid}).orFail().exec();
         res.send('delete successful');
       }
       catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.send('no book exists');
       }
     });
