@@ -33,6 +33,7 @@ module.exports = function (app) {
       }
       catch (error) {
         console.error(error.message);
+        res.send(error.message);
       }
     })
     
@@ -71,13 +72,17 @@ module.exports = function (app) {
 
 
   app.route('/api/books/:id')
-    .get(function (req, res){
+    .get(async function (req, res){
       //json res format: {"_id": bookid, "title": book_title, "comments": [comment,comment,...]}
       try {
         const bookid = req.params.id;
+        const foundBook = await Book.find({_id: bookid}).exec();
+
+        res.json(foundBook);
       }
       catch (error) {
         console.error(error.message);
+        res.send('no book exists');
       }
     })
     
