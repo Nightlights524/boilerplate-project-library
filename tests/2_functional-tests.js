@@ -2,7 +2,6 @@ const chaiHttp = require('chai-http');
 const chai = require('chai');
 const assert = chai.assert;
 const server = require('../server');
-const { MongoNetworkError } = require('mongodb');
 
 chai.use(chaiHttp);
 
@@ -124,7 +123,6 @@ suite('Functional Tests', function() {
           .post('/api/books')
           .send({title: 'New Book'})
           .end(function(err, res){
-            const newComment = 'New Comment';
             chai.request(server)
               .post(`/api/books/${res.body._id}`)
               .end(function(err, res){
